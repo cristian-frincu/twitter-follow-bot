@@ -20,13 +20,20 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 
 from twitter import Twitter, OAuth, TwitterHTTPError
 import os
+import random
+import time
 
-# put your tokens, keys, secrets, and Twitter handle in the following variables
-OAUTH_TOKEN = ""
-OAUTH_SECRET = ""
-CONSUMER_KEY = ""
-CONSUMER_SECRET = ""
-TWITTER_HANDLE = ""
+from creditentials import (
+    OAUTH_TOKEN,
+OAUTH_SECRET,
+CONSUMER_KEY,
+CONSUMER_SECRET,
+TWITTER_HANDLE, 
+)
+
+# list in the full path and file name of the file you want to store your "already followed"
+ALREADY_FOLLOWED_FILE = "already-followed.csv"
+
 
 MIN_MINUTES_BETWEEN_ROUNDS=0.2
 MAX_MINUTES_BETWEEN_ROUNDS=10
@@ -177,7 +184,7 @@ def auto_follow_followers():
             print("error: %s" % (str(e)))
 
 
-def auto_unfollow_nonfollowers():
+def auto_unfollow_nonfollowers(numberToUnfollow=10):
     """
         Unfollows everyone who hasn't followed you back
     """
@@ -210,8 +217,13 @@ def auto_unfollow_nonfollowers():
         for val in already_followed:
             out_file.write(str(val) + "\n")
 
+
+    unfollowed=0;
     for user_id in not_following_back:
+        if unfollowed==numberToUnfollow:
+            break;
         if user_id not in users_keep_following:
+            unfollowed+=1;
             t.friendships.destroy(user_id=user_id)
             print("unfollowed %d" % (user_id))
 
@@ -249,3 +261,21 @@ def auto_unmute():
         if user_id not in users_keep_muted:
             t.mutes.users.destroy(user_id=user_id)
             print("unmuted %d" % (user_id))
+
+
+timesRunning = 0
+while True:
+    numberToFollow =random.randint(MIN_TO_FOLLOW_PER_ROUND,MAX_TO_FOLLOW_PER_ROUND);
+    secondsUntilNextWave = random.randint(MIN_MINUTES_BETWEEN_ROUNDS*60,MAX_MINUTES_BETWEEN_ROUNDS*60)
+    print "---Number to follow:",numberToFollow
+    auto_follow(HASHTAGS_TO_FOLLOW,numberToFollow)
+    print "---Wait until next wave:",secondsUntilNextWave
+    time.sleep(secondsUntilNextWave)
+    timesRunning+=1
+    print "-------------Rounds Running:"+str(timesRunning)+"-------------------"
+
+
+
+
+
+
