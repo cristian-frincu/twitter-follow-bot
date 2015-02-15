@@ -28,9 +28,12 @@ CONSUMER_KEY = ""
 CONSUMER_SECRET = ""
 TWITTER_HANDLE = ""
 
-# put the full path and file name of the file you want to store your "already followed"
-# list in
-ALREADY_FOLLOWED_FILE = "already-followed.csv"
+MIN_MINUTES_BETWEEN_ROUNDS=0.2
+MAX_MINUTES_BETWEEN_ROUNDS=10
+MIN_TO_FOLLOW_PER_ROUND=3
+MAX_TO_FOLLOW_PER_ROUND=10
+HASHTAGS_TO_FOLLOW = 'followback'
+
 
 t = Twitter(auth=OAuth(OAUTH_TOKEN, OAUTH_SECRET,
             CONSUMER_KEY, CONSUMER_SECRET))
